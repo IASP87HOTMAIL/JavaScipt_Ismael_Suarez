@@ -64,7 +64,7 @@ var calculadora = {
         } else {
             this.numero1 = this.resultado;
         }
-        if (this[this.operacion] !== "") {
+        if (this.operacion !== "") {
             this[this.operacion]();
             this.display = this.resultado.toString();
             this.leerNumero = false;
@@ -72,6 +72,7 @@ var calculadora = {
     },
     operar: function (tecla) {
         this.leerNumero = true;
+        this.operacion = (this.operacion !== tecla.tipo) ? "" : this.operacion;
         this.igual();
         this.operacion = tecla.tipo;
         this.numero1 = (this.resultado !== 0) ? this.resultado : this.numero2;
@@ -91,7 +92,7 @@ var calculadora = {
 
     },
     teclaAction: function (tecla) {
-        var metodo = (tecla.tipo === "mas" || tecla.tipo === "mas" || tecla.tipo === "mas" || tecla.tipo === "mas") ?
+        var metodo = (tecla.tipo === "mas" || tecla.tipo === "menos" || tecla.tipo === "por" || tecla.tipo === "dividido") ?
                 "operar" : tecla.tipo;
         this[metodo](tecla);
         this.actualizarDisplay();
