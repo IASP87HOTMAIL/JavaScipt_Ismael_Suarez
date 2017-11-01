@@ -27,13 +27,13 @@ var calculadora = {
         this.resultado = this.numero1 - this.numero2;
     },
     por: function () {
-        this.resultado = (this.numero1 !== 0) ? this.numero1 * this.numero2: this.numero1;
+        this.resultado = (this.numero1 !== 0) ? this.numero1 * this.numero2 : this.numero1;
     },
     dividido: function () {
-        this.resultado = (this.numero1 !== 0) ? this.numero1 / this.numero2: this.numero1;
+        this.resultado = (this.numero1 !== 0) ? this.numero1 / this.numero2 : this.numero1;
     },
     actualizarDisplay: function () {
-        this.display = (this.display.length > 8) ? this.display.substring(0,8): this.display;
+        this.display = (this.display.length > 8) ? this.display.substring(0, 8) : this.display;
         document.getElementById("display").innerHTML = this.display;
     },
     on: function () {
@@ -44,18 +44,38 @@ var calculadora = {
         this.leerNumero = false;
         this.display = "0";
     },
-    punto: function(){
-        if(this.display.indexOf('.')<0){
-            this.display += (this.display === "" ? "0": "") + ".";
+    punto: function () {
+        if (this.display.indexOf('.') < 0) {
+            this.display += (this.display === "" ? "0" : "") + ".";
         }
     },
-    sign: function(){
-        if(this.display !== "0" && this.display !== "0."){
-            this.display = (this.display.indexOf('-')<0) ? "-" + this.display : this.display.replace("-","");
-        } 
+    sign: function () {
+        if (this.display !== "0" && this.display !== "0.") {
+            this.display = (this.display.indexOf('-') < 0) ? "-" + this.display : this.display.replace("-", "");
+        }
     },
-    numeros: function(){
-        
+    numeros: function (tecla) {
+        this.leerNumero = true;
+        this.display = (this.display === "0") ? tecla.val : this.display + tecla.val;
+    },
+    igual: function () {
+        if (this.leerNumero) {
+            this.numero2 = Number.parseFloat(this.display);
+        } else {
+            this.numero1 = this.resultado;
+        }
+        if (this[this.operacion] !== "") {
+            this[this.operacion]();
+            this.display = this.resultado.toString();
+            this.leerNumero = false;
+        }
+    },
+    operar: function (tecla) {
+        this.leerNumero = true;
+        this.igual();
+        this.operacion = tecla.tipo;
+        this.numero1 = (this.resultado !== 0) ? this.resultado : this.numero2;
+        this.display = "";
     },
     teclaPressDown: function (tecla) {
         tecla.elementHtml.addEventListener("mousedown", function () {
@@ -71,52 +91,9 @@ var calculadora = {
 
     },
     teclaAction: function (tecla) {
-        switch (tecla.tipo) {
-            case "numeros":
-                this.leerNumero = true;
-                this.display = (this.display === "0") ? tecla.val : this.display + tecla.val;
-                break;
-
-            case "on":
-                this.on();
-                break;
-                break;
-
-            case "punto":
-                this.punto();
-                break;
-                break;
-
-            case "sign":
-                this.sign();
-                break;
-
-            case "por":
-            case "dividido":
-            case "menos":
-            case "mas":
-                this.numero2 = Number.parseFloat(this.display);
-                if(this.operacion !== ""){
-                    this[this.operacion]();
-                } /*else{
-                    this.resultado = this.numero1;
-                }*/
-                this.operacion = tecla.tipo;
-                this.numero1 = (this.resultado !== 0) ? this.resultado : this.numero2;
-                this.display = "";
-                break;
-            default:
-                if(this.leerNumero){
-                    this.numero2 = Number.parseFloat(this.display);
-                } else{
-                    this.numero1 = this.resultado;
-                }
-                this[this.operacion]();
-                this.display = this.resultado.toString();
-                this.leerNumero = false;
-                //this.numero1 = this.numero2;
-                break;
-        }
+        var metodo = (tecla.tipo === "mas" || tecla.tipo === "mas" || tecla.tipo === "mas" || tecla.tipo === "mas") ?
+                "operar" : tecla.tipo;
+        this[metodo](tecla);
         this.actualizarDisplay();
 
     }
